@@ -1,7 +1,8 @@
 import './App.css';
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {useImmer} from 'use-immer'
 import { Link, Route, Routes, useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
 
 const Header = ({title})=> {
   return <header>
@@ -54,27 +55,39 @@ const Create = ({onSave}) => {
 const Read = ({topics})=> {
   const params = useParams();
   const id = Number(params.id);
-  const topic = topics.find(t=> t.id===id);
-  return <Article title={topic.title} body={topic.body}> </Article>
+  const [title, setTitle] = useState('');
+  const [body, setBody] = useState('');
+  useEffect(()=>{
+    axios.get(`/topics/${id}`).then(result=>{
+      setTitle(result.data.title);
+      setBody(result.data.body);
+    })
+  });
+  return <Article title={title} body={body}> </Article>
 }
 
 function App(){
 
-  const [nextId, setNextId] = useState(4) //글 추가할 때 다음 아이디 지정
-  const [topics, setTopics] = useImmer([
-    {id:1, title:'html', body:'html is ...'},
-    {id:2, title:'css', body:'css is ...'},
-    {id:3, title:'js', body:'js is ...'}
-  ]);
+  const [topics, setTopics] = useImmer([]);
+
+  const fetchTopics = async()=> {
+    const topics = await axios.get('/topics');
+    setTopics(topics.data);
+  }
+  // 서버랑 통신하는 코드
+  useEffect(()=> {
+    fetchTopics();
+  }, []);
+
   const navigate = useNavigate();
-  
    const saveHandler = (title, body) => {
-    setTopics(draft => {
-      draft.push({id:nextId, title, body})
-    });
-    //url을 생성된 컨텐츠의 주소로 변경
-    navigate(`/read/${nextId}`);
-    setNextId(oldNextId => oldNextId + 1);
+
+    axios.post('/topics', {title, body}).then(result => {
+      setTopics(draft=> {
+        draft.push(result.data);
+      })
+      navigate(`/read/${result.data.id}`);
+    })
   }
 
   return (
