@@ -34,7 +34,6 @@ const Article = ({title, body})=> {
 const Control = () => {
 
   const params = useParams();
-
   const id = Number(params.id);
   let contextUI = null;
   if(id) {
@@ -81,7 +80,6 @@ const Update = ({onSave}) => {
   const id = Number(params.id);
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
-  const [author, setAuthor] = useState('');
 
 
   useEffect(()=>{
@@ -105,22 +103,22 @@ const Update = ({onSave}) => {
     setBody(evt.target.value);
   }
 
-  const authorHandler = (evt)=> {
-    setAuthor(evt.target.value);
-  }
-
-
   return <form onSubmit={submitHandler}>
     <p><input type="text" name="title" placeholder="title" value={title} onChange={titleHandler} /></p>
     <p><textarea name="body" placeholder="body" value={body} onChange={bodyHandler}></textarea></p>
-    <p><input type='text' name="author" value={author} onChange={authorHandler} /></p>
     <p><input type="submit" value="Create" /></p>
   </form>
+}
+const DarkMode = ({isDark, changeMode}) => {
+  return <div>
+    <button onClick={()=>{changeMode(!isDark)}}>{isDark?"Light" :"Dark"}</button>
+  </div>
 }
 
 
 function App() {
 
+  const [isDark, setIsdark] = useState(false);
   const [topics, setTopics] = useImmer([]);
 
   const fetchTopics = async()=> {
@@ -131,6 +129,10 @@ function App() {
   useEffect(()=> {
     fetchTopics();
   }, []);
+
+  useEffect(()=>{
+    document.querySelector('html').style.filter = `invert(${isDark ? 100 : 0}%)`;
+  }, [isDark])
 
   const navigate = useNavigate();
    const createHandler = (title, body) => {
@@ -158,6 +160,7 @@ function App() {
   return (
     <div className="App">
       <Header title="웹" />
+      <DarkMode isDark={isDark} changeMode={(isDark)=>{setIsdark(isDark)}}></DarkMode>
       <Nav topics={topics}/>
       <Routes>
         <Route path="/" element={<Article title="Hello" body = "Welcome, WEB!"/>}></Route>

@@ -71,7 +71,7 @@ function App(){
   const [topics, setTopics] = useImmer([]);
 
   const fetchTopics = async()=> {
-    const topics = await axios.get('/topics');
+    const topics = await axios.get('http://localhost:3232/topics');
     setTopics(topics.data);
   }
   // 서버랑 통신하는 코드
