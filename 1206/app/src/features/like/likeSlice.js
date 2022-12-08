@@ -11,8 +11,11 @@ const slice = createSlice({
       up: (state, action) => {
         state.count = state.count +1
       },
+      reset: (state, action) => {
+        state.count = 0
+      },
     },
   })
 
 export default slice;
-export const {up} = slice.actions;
+export const {up, reset} = slice.actions;

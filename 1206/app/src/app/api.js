@@ -5,6 +5,20 @@ export const topicApi = createApi({
     baseQuery: fetchBaseQuery({ baseUrl: '/' }),
     tagTypes:['Topics'],
     endpoints: (builder) => ({
+      getLikes: builder.query({
+        query: ()=> `likes`,
+        providesTags: ['Likes'],
+      }),
+
+      setLike: builder.mutation({
+        query: ({count})=>({
+            url:`likes`,
+            method: `POST`,
+            body: {count}  
+        }),
+        invalidatesTags: ['Likes']
+      }),
+
       getTopics: builder.query({
         query: () => `topics`,
         providesTags: (result, error, arg) => {
@@ -47,6 +61,8 @@ export const topicApi = createApi({
   })
   
   export const { 
+    useGetLikesQuery,
+    useSetLikeMutation,
     useGetTopicsQuery, 
     useGetTopicQuery, 
     useCreateTopicMutation, 

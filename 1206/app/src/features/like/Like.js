@@ -1,5 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux';
 import {up} from './likeSlice';
+import {reset} from './likeSlice';
 
 const Like = ()=> {
 
@@ -7,9 +8,12 @@ const Like = ()=> {
     const dispatch = useDispatch();
     
     return <div>
-        <button onClick={()=> {
+        <button className='likeBtn' onClick={()=> {
             dispatch(up())
         }}>좋아요({count})</button>
+        <button className='resetBtn' onClick={()=> {
+            dispatch(reset())
+        }}>리셋({count})</button>
     </div>
 }
 

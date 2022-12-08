@@ -6,6 +6,9 @@ import axios from 'axios';
 import { useSelector, useDispatch } from 'react-redux';
 import darkSlice from './features/dark/darkSlice';
 import { useCreateTopicMutation, useDeleteTopicMutation, useGetTopicQuery, useGetTopicsQuery, useUpdateTopicMutation } from './app/api';
+import Like from './features/like/Like';
+import LikeServer from './features/like/LikeServer';
+
 const Header = ({title}) => {
   return <header>
       <h1><Link to="/">{title}</Link></h1>
@@ -116,7 +119,6 @@ const Read = ()=>{
   // return <Article title={data.title} body={data.body}></Article>
 
   const {data, isLoading} = useGetTopicQuery(id);
-  console.log("data", data,"isloading", isLoading)
   if(isLoading) {
     return <>Loading.....</>
   }
@@ -133,6 +135,7 @@ const DarkMode = ()=>{
     }}>{isDark ? 'Light' : 'Dark'}</button>
   </div>
 }
+
 function App() {
   const isDark = useSelector(state=>state.darkmode.isDark);
   const {data:topicsData, isLoading:isTopicLoaindg} = useGetTopicsQuery();
@@ -141,25 +144,10 @@ function App() {
     document.querySelector('html').style.filter = `invert(${isDark ? 100 : 0}%)`;
   }, [isDark])
 
-
-  const navigate = useNavigate();
-  const createHandler = (title, body) => {
-    axios.post('/topics', {title, body}).then(result => {
-      navigate(`/read/${result.data.id}`);
-    });
-  }
-  const updateHandler = (id, title, body) => {
-    axios.patch(`/topics/${id}`, {title, body}).then(result => {
-      navigate(`/read/${id}`);
-    });
-  }
   if(isTopicLoaindg) {
     return <>Loading</>
   }
-  const deleteHandler = async(id)=>{
-    await axios.delete(`/topics/${id}`);
-    navigate('/');
-  }
+
   return (
     <div className="App">
       <Header title="웹" />
@@ -167,16 +155,18 @@ function App() {
       <Nav topics={topicsData} />
       <Routes>
       <Route path="/" element={<Article title="Hello" body="Welcome, WEB!" />}></Route>
-      <Route path="/create" element={<Create onSave={createHandler}></Create>}></Route>
-      <Route path="/update/:id" element={<Update onSave={updateHandler}></Update>}></Route>
+      <Route path="/create" element={<Create></Create>}></Route>
+      <Route path="/update/:id" element={<Update></Update>}></Route>
       <Route path="/read/:id" element={<Read />}></Route>
       </Routes>
       <Routes>
         <Route path="/" element={<Control></Control>} />
-        <Route path="/read/:id" element={<Control onDelete={deleteHandler}></Control>} />
+        <Route path="/read/:id" element={<Control></Control>} />
         <Route path="/create" element={<Control></Control>} />
-        <Route path="/update/:id" element={<Control onDelete={deleteHandler}></Control>} />
+        <Route path="/update/:id" element={<Control></Control>} />
       </Routes>
+      <Like/>
+      <LikeServer/>
     </div>
   );
 }

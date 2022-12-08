@@ -1,0 +1,23 @@
+.likeBtn {
+    width: 70px;
+    height: 45px;
+    background-color: lightcoral;
+    font-weight: 200;
+    border-radius: 10px;
+    color: aliceblue;
+    border: 1px solid palevioletred;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.resetBtn {
+    width: 70px;
+    height: 45px;
+    background-color: lightblue;
+    font-weight: 200;
+    border-radius: 10px;
+    color: black;
+    border: 1px solid skyblue;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
